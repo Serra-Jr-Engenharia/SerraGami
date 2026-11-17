@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Member {
+  id        Int       @id @default(autoincrement())
+  name          String    @unique
+  sector        String    // Mecânica, Computação, RH, Marketing, Comercial, Serralab
+  points        Int       @default(0) // Pre-computed total
+  pokemonFamily Int?      // Custom pokemon family override
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  transactions Transaction[]
+}
+
+model Transaction {
+  id          Int      @id @default(autoincrement())
+  points      Int      // can be negative
+  description String
+  category    String   // GERAIS, CULTURAIS, SETORIAIS, DESCONTOS
+  date        DateTime @default(now())
+  
+  memberId    Int
+  member      Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+}
